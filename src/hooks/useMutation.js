@@ -1,0 +1,38 @@
+import { useState } from "react";
+
+const useMutation = (mutation, opts) => {
+    const [data, setData] = useState([])
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(false)
+
+    const onMutation = async (payload,id) => {
+        try{
+            setLoading(true)
+            let response;
+            if(!id){
+                 response = await mutation(payload)
+            }
+            else{
+                 response = await mutation(payload, id)
+            }
+            setData(response.data)
+
+
+            opts?.onSuccess?.()
+        }catch(e){
+            setError(true)
+
+
+            opts?.onError?.()
+        }finally{
+            setLoading(false)
+        }
+    }
+    
+    return {
+        data, loading, error, onMutation
+    }
+}
+
+
+export default useMutation
